@@ -13,6 +13,10 @@ public class CollectionRequest implements Serializable {
 	
 	HashMap<String, Serializable> parameters = new HashMap<String, Serializable>();
 	
+	public CollectionRequest() {
+		this.type = RequestType.OTHER;
+	}
+	
 	public CollectionRequest(RequestType type) {
 		this.type = type;
 	}

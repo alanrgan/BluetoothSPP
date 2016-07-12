@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
+import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.UUID;
@@ -47,6 +48,25 @@ public class Server {
     public InputStream getInputStream(ServerManager.Key key) {
     	key.hashCode();
     	return inStream;
+    }
+    
+    public RemoteDevice getRemoteDevice() {
+    	if(connection != null) {
+    		try {
+    			return RemoteDevice.getRemoteDevice(connection);
+    		} catch (IOException e) {
+    			return null;
+    		}
+    	} else
+    		return null;
+    }
+    
+    public LocalDevice getLocalDevice() {
+    	try {
+    		return LocalDevice.getLocalDevice();
+    	} catch (BluetoothStateException e) {
+    		return null;
+    	}
     }
     
     public void writeToStream(Serializable data, ServerManager.Key key) throws IOException {
