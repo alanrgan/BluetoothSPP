@@ -7,7 +7,7 @@ public class CollectionRequest implements Serializable {
 	private static final long serialVersionUID = 4887284704831950688L;
 	
 	public enum RequestType {
-		IMU_START, IMU_END, CONNECTION_STATE, OTHER
+		STOP, CLOSE, CONNECTION_STATE, DATA, OTHER
 	}
 	private RequestType type;
 	
@@ -21,8 +21,13 @@ public class CollectionRequest implements Serializable {
 		this.type = type;
 	}
 	
-	public void addParameter(String key, Serializable param) {
+	public RequestType getType() {
+		return type;
+	}
+	
+	public CollectionRequest addParameter(String key, Serializable param) {
 		parameters.put(key, param);
+		return this;
 	}
 	
 	public HashMap<String, Serializable> getParameters() {

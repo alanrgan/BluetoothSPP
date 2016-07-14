@@ -2,9 +2,7 @@ package connection;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.LocalDevice;
@@ -45,6 +43,11 @@ public class Server {
         outStream = connection.openOutputStream();
     }
     
+    public OutputStream getOutputStream(ServerManager.Key key) {
+    	key.hashCode();
+    	return outStream;
+    }
+    
     public InputStream getInputStream(ServerManager.Key key) {
     	key.hashCode();
     	return inStream;
@@ -69,19 +72,11 @@ public class Server {
     	}
     }
     
-    public void writeToStream(Serializable data, ServerManager.Key key) throws IOException {
-    	key.hashCode();
-    	if(connection != null) {
-    		if(outStream == null)
-    			outStream = connection.openOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(outStream);
-			oos.writeObject(data);
-    	}
-    }
-    
     public void closeConnection(ServerManager.Key key) throws IOException {
-    	streamConnNotifier.close();
-    	outStream.close();
+    	if(outStream != null) {
+	    	streamConnNotifier.close();
+	    	outStream.close();
+    	}
     }
     
 }

@@ -2,6 +2,7 @@ package connection;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public class ServerManager extends ConnectionManager {
 	private Server server;
@@ -9,9 +10,14 @@ public class ServerManager extends ConnectionManager {
 	private InputStream inputStream = null;
 	private Thread serverThread;
 	private Thread listenerThread;
+	private OnServerStartedHandler startHandler = null;
 	
 	public ServerManager(Server server) {
 		this.server = server;
+	}
+	
+	public static abstract class OnServerStartedHandler {
+		public abstract void handle();
 	}
 	
 	public void startServer() {
@@ -21,8 +27,13 @@ public class ServerManager extends ConnectionManager {
 				try {
 					server.startServer(key);
 					inputStream = server.getInputStream(key);
+					outStream = server.getOutputStream(key);
 				} catch (IOException e) {
 					e.printStackTrace();
+				} finally {
+					if(startHandler != null) {
+						startHandler.handle();
+					}
 				}
 			}
 		});
@@ -30,30 +41,10 @@ public class ServerManager extends ConnectionManager {
 		serverThread.start();
 	}
 	
-	public void sendRequest(String text) {
-		try {
-			server.writeToStream(text, key);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public boolean sendRequest(CollectionRequest request) {
-		try {
-			server.writeToStream(request, key);
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-	
-	public void closeConnection() {
-		try {
+	public void closeConnection() throws IOException {
+		if(mInputListener != null) {
 			server.closeConnection(key);
 			mInputListener.close(key);
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -88,5 +79,9 @@ public class ServerManager extends ConnectionManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void setOnServerStartedHandler(OnServerStartedHandler handler) {
+		startHandler = handler;
 	}
 }
