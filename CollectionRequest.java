@@ -7,11 +7,11 @@ public class CollectionRequest implements Serializable {
 	private static final long serialVersionUID = 4887284704831950688L;
 	
 	public enum RequestType {
-		STOP, CLOSE, CONNECTION_STATE, DATA, OTHER
+		STOP, CLOSE, CONNECTION_STATE, DATA, NEW_TRIAL, OTHER
 	}
 	private RequestType type;
 	
-	HashMap<String, Serializable> parameters = new HashMap<String, Serializable>();
+	HashMap<String, Serializable> parameters = new HashMap<>();
 	
 	public CollectionRequest() {
 		this.type = RequestType.OTHER;

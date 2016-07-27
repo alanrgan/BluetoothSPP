@@ -26,25 +26,28 @@ public abstract class InputListener extends Thread {
 		while(!Thread.currentThread().isInterrupted() && !close) {
 			try {
 				if(mInputStream.available() > 0) {
-					ObjectInputStream in = new ObjectInputStream(mInputStream);
 					CollectionRequest req;
 					try {
-						req = (CollectionRequest) in.readObject();
-						handle(req);
+						synchronized(mInputStream) {
+							ObjectInputStream in = new ObjectInputStream(mInputStream);
+							req = (CollectionRequest) in.readObject();
+							handle(req);
+						}
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
 						close = true;
 						return;
 					}
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				onInterrupted(e);
 				close = true;
 			}
 		}
 	}
 	
 	public abstract void handle(CollectionRequest req);
+	public abstract void onInterrupted(Exception e);
 	
 	public void close(ConnectionManager.Key key) throws IOException {
 		key.hashCode();

@@ -7,6 +7,7 @@ import java.io.OutputStream;
 public abstract class ConnectionManager {
 	public final class Key { protected Key() {} }
 	public final Key key = new Key();
+	private final Object LOCK = new Object();
 	
 	protected OutputStream outStream = null;
 	
@@ -16,9 +17,13 @@ public abstract class ConnectionManager {
 	
 	public boolean sendRequest(CollectionRequest request) throws IOException {
 		if(outStream != null) {
-			ObjectOutputStream oos = new ObjectOutputStream(outStream);
-			oos.writeObject(request);
-			return true;
+			synchronized(LOCK) {
+				synchronized(outStream) {
+					ObjectOutputStream oos = new ObjectOutputStream(outStream);
+					oos.writeObject(request);
+					return true;
+				}
+			}
 		}
 		return false;
 	}
