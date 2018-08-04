@@ -2,7 +2,7 @@
 ## Introduction
 This is a simple Bluetooth SPP (Serial Port Profile) client-server library implemented with the BlueCove 2.1.1 API. This is written for communication between an Android client and a desktop server but can be modified to support any platform.
 
-##Usage
+## Usage
 #### Starting the Server
 All server connections must be maintained by a `ServerManager`
 ```java
